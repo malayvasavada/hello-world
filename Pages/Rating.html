@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.1/jquery.js" type="text/javascript"></script>
+
+<style>
+
+body { 
+    font-size: 100%; 
+    font-family: sans-serif; 
+}
+.smiley-rate { 
+    padding: 15px; 
+}
+.smiley-rate__visual { 
+    position: relative;
+    height: 50px;
+    margin: 0 0 10px; 
+    font-size: 3em; 
+    font-weight: bold; 
+    color: #666;
+}
+[class^="smiley-rate__visual-"], 
+[class*=" smiley-rate__visual-"] { 
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+.smiley-rate__visual-0 { opacity: 1; }
+
+.smiley-rate__value { 
+    margin: 0 0 10px;
+}
+.smiley-rate__slider { 
+    width: 200px;
+}
+
+</style>
+
+<body>
+
+<h1>Rate this site</h1>
+
+<div class="smiley-rate">
+    <div class="smiley-rate__visual">
+        <span class="smiley-rate__visual-0">x(</span>
+        <span class="smiley-rate__visual-1">:(</span>
+        <span class="smiley-rate__visual-2">:|</span>
+        <span class="smiley-rate__visual-3">:)</span>
+        <span class="smiley-rate__visual-4">;D</span>
+    </div>
+    <input class="smiley-rate__slider" type="range" min="10" max="90" value="0" tabindex="0" />
+</div>
+
+<script>
+
+function vibrate(duration) {
+	if ("vibrate" in navigator) {
+        navigator.vibrate(duration);
+    }
+}
+
+$.fn.smileyRate = function () {
+	var self = this;
+    var currentRating = 'Average';
+    
+    var ratings = {
+        'Poor': 20, 
+        'Fair': 40, 
+        'Average': 60, 
+        'Very Good': 80, 
+        'Excellent': 100
+    };
+    
+    this.showVisual = function (index) {        
+        $('.smiley-rate__visual', self).children().each(function (i, el) {
+        	var $visual = $(el);
+            
+            if (i == index) {
+            	$visual.css('opacity', 1);
+            } else {
+            	$visual.css('opacity', 0);
+            }
+        });
+    };
+    
+    self.on('input.smiley-rate', '.smiley-rate__slider', function () {
+        var range = $(this).val();
+        
+        if (range < 20) {
+            handleSlideChange('Poor');
+        }
+        else if (range < 40) {
+            handleSlideChange('Fair');
+        }
+        else if (range < 60) {
+            handleSlideChange('Average');
+        }
+        else if (range < 80) {
+            handleSlideChange('Very Good');
+        }
+        else if (range <= 100) {
+            handleSlideChange('Excellent');
+        }
+    });
+    
+    function handleSlideChange(rating) {
+        if (rating != currentRating) {
+            var index = (ratings[rating]-20) / 20;
+        	self.showVisual(index);
+            currentRating = rating;
+        }
+    }
+    
+    return self;
+};
+
+$(function () {
+	$('.smiley-rate').smileyRate();
+});
+
+
+</script>
+
+
+</body>
+</html>
